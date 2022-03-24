@@ -1,4 +1,4 @@
-import { toDoConstant } from "../constans";
+import { toDoConstant } from "../constants";
 
 const add = (toDo) => { return { type: toDoConstant.ADD, payload: toDo } };
 
