@@ -5,7 +5,7 @@ import toDoAction from "../actions/toDoAction";
 
 class ToDoFormComponent extends React.Component {
 
-    state = { text: "" }
+    state = { text: "", selectedToDo: {} }
 
     handleOnChange = (e) => {
 
@@ -14,35 +14,90 @@ class ToDoFormComponent extends React.Component {
         this.setState({ [name]: value });
     }
 
+    static getDerivedStateFromProps = (props, state) => {
+
+        const { selectedToDo } = props;
+
+        if (selectedToDo && state.selectedToDo.text !== selectedToDo.text) {
+
+            //this.setState({text: selectedToDo.text})
+            // state için
+            return { text: selectedToDo.text, selectedToDo }
+        }
+
+        // state değişikliği yok
+        return null;
+    }
+
     buttonOnClick = () => {
 
-        let newToDo = {
-            text: this.state.text,
-            id: uuidv4()
-        };
+        if (!this.props.selectedToDo) {
 
-        this.props.add(newToDo);
+            let newToDo = {
+                text: this.state.text,
+                id: uuidv4()
+            };
+
+            this.props.add(newToDo);
+        }
+        else {
+
+            this.props.update({ ...this.props.selectedToDo, ...{ text: this.state.text } })
+        }
+
+        this.reset();
+    }
+
+    reset = () => {
+
+        this.props.select(null);
+
+        this.props.setButtonText("ekle");
+
+        this.setState({ text: "", selectedToDo: {} });
     }
 
     render = () => {
+
+        const { buttonText, selectedToDo } = this.props;
+
+        const { text } = this.state;
 
         return (
             <>
                 <input type="text"
                     name="text"
                     onChange={this.handleOnChange}
-                    value={this.state.text} />
-                <button onClick={this.buttonOnClick}>ekle</button>
+                    value={text} />
+                <br></br>
+                <button onClick={this.buttonOnClick}>{buttonText}</button>
+                {
+                    selectedToDo &&
+                    <>
+                        <br></br>
+                        <button onClick={this.reset}>iptal</button>
+                    </>
+                }
             </>
         )
     }
 }
 
+const mapStateToProps = (state) => {
+
+    const { buttonText, selectedToDo } = state.toDoReducer;
+
+    return { buttonText, selectedToDo }
+}
+
 const mapDispatchFromProps = (dispatch) => {
 
     return {
-        add: (toDo) => dispatch(toDoAction.add(toDo))
+        add: (toDo) => dispatch(toDoAction.add(toDo)),
+        update: (toDo) => dispatch(toDoAction.update(toDo)),
+        select: (item) => dispatch(toDoAction.select(item)),
+        setButtonText: (text) => dispatch(toDoAction.setButtonText(text)),
     }
 }
 
-export const ToDoForm = connect(null, mapDispatchFromProps)(ToDoFormComponent);
+export const ToDoForm = connect(mapStateToProps, mapDispatchFromProps)(ToDoFormComponent);
