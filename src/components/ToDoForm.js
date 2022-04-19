@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
 import toDoAction from "../actions/toDoAction";
+import LoadingPanel from "./LoadingPanel";
 
 class ToDoFormComponent extends React.Component {
 
@@ -59,6 +60,11 @@ class ToDoFormComponent extends React.Component {
 
     render = () => {
 
+        if (this.props.addedToDo.isLoading) {
+            
+            return <LoadingPanel />
+        }
+
         const { buttonText, selectedToDo } = this.props;
 
         const { text } = this.state;
@@ -85,9 +91,9 @@ class ToDoFormComponent extends React.Component {
 
 const mapStateToProps = (state) => {
 
-    const { buttonText, selectedToDo } = state.toDoReducer;
+    const { buttonText, selectedToDo, addedToDo } = state.toDoReducer;
 
-    return { buttonText, selectedToDo }
+    return { buttonText, selectedToDo, addedToDo }
 }
 
 const mapDispatchFromProps = (dispatch) => {

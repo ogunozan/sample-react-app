@@ -6,7 +6,7 @@ class ToDoHeaderComponent extends React.Component {
     render = () => {
 
         return (
-            <h>yapılacak listesinde {this.props.toDos.length} adet kayıt var</h>
+            <h>yapılacak listesinde {this.props.toDos.data?.length} adet kayıt var</h>
         )
     }
 }

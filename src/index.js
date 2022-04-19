@@ -4,11 +4,14 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-import { createStore, combineReducers } from "redux";
+import { createStore, combineReducers, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
+import thunkMiddleware from "redux-thunk";
+import logger from "redux-logger";
 import { toDoReducer } from "./reducers";
 
-const store = createStore(combineReducers({ toDoReducer }));
+const store = createStore(combineReducers({ toDoReducer }), 
+    applyMiddleware(thunkMiddleware, logger));
 
 ReactDOM.render(
     <React.StrictMode>
